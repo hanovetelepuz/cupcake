@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>System Update</title>
+    <style>
+        /* Блокировка выделения текста */
+        body { 
+            margin: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; height: 100vh; font-family: 'Courier New', Courier, monospace; 
+            transition: background 0.1s; overflow: hidden;
+            -webkit-user-select: none; 
+            -ms-user-select: none; 
+            user-select: none; 
+        }
+        #ui-container { text-align: center; width: 90%; }
+        .icon { width: 60px; height: 60px; background: #f1f3f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .progress-bar { width: 100%; height: 6px; background: #e0e0e0; margin: 20px auto; border-radius: 3px; overflow: hidden; }
+        
+        /* Добавлена анимация прогресс-бара */
+        #fill { 
+            width: 0%; height: 100%; background: #007AFF; 
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        #cuphead-art { display: none; font-size: 6px; line-height: 6px; white-space: pre; text-align: center; color: #fff; }
+        #timer-display { font-size: 24px; color: #fff; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="#007AFF"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm0 12l-4-4h2.5V6h3v4h2.5L12 14z"/></svg></div>
+        <h2 id="status">Обновление ПО</h2>
+        <div class="progress-bar" id="pb"><div id="fill"></div></div>
+        <p id="percent">Загрузка... 0%</p>
+    </div>
+
+    <pre id="cuphead-art">
+                  @                                          
+            @@@@%*+@                                         
+      @@@@@%=-==. .=@@                                       
+ @@@%%######.:+..-**#@@                 @@@@@@@@%#**+++*%@   
+@%:.:+#####*--==*#####@@         @@@@@#+--::..-=*#*.   .-%@  
+@#. .+#######+#########%@@  @@@@#=::...       .+@@@@=.  .=@@ 
+@%: .-*######%#####+:..:*@@#=*@%#=.            :%@@%:.   .#@ 
+ @#. .=*#####@%##*::-*@#-...-@@@@@#-.          .#@@%+..   =@ 
+  @#:..-%@@@@ @@#=#@%:..    -@@@@@#:.          .#@@@@#.   :%@
+   @@@@@@      @@+...* .%@@@%..           --+@@@+.   :%@
+            @@%-..  .:+     .=@@@@@@@-.       .*######*- .*@@
+            @*.      .:*.     =@@@@@@=.      .=%######*=#-:%@
+           @@%-        .=-.    .@@@@%:.     .==..:=-...   +@ 
+          @%-**.        .:*-.   .....     .-*.           .#@ 
+         @#..-#+.          .:#=.........-#=...          .+@@ 
+        @@. .:+@+..     ...::....:---:.....:=+=..      .=@@  
+        @%.  .+***:.    .*@@@@@@@@@@@@@@@@@@@@@%:.   ..+@@   
+        @@:  .-#-=%-.   :########@@@@@@@@@@@@@@*.   .:*@@    
+         @%.  .-*%#@@-...=##############@@@@@@#:. .:+@@      
+          @%-..   ..:+%*:.:**############@@@#-...:#@@        
+           @@@*-:::::=%@@@*-::-+*******+=-...:-*@@@          
+              @@@@@@@@    @@@@%*=--::::--=*%@@@@             
+                                @@@@@@@@@@                   
+    </pre>
+
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || e.key === 'F12' || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                alert("Системная операция заблокирована.");
+            }
+        });
+        document.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); });
+
+        let p = 0;
+        let attempts = 3;
+        const fill = document.getElementById('fill'), container = document.getElementById('ui-container'), 
+              percent = document.getElementById('percent'), cArt = document.getElementById('cuphead-art');
+
+        let interval = setInterval(() => {
+            p += Math.floor(Math.random() * 9);
+            if (p >= 100) {
+                p = 100; clearInterval(interval);
+                fill.style.width = '100%';
+                percent.innerText = 'Загрузка... 100%';
+                alert("CRITICAL ERROR: Kernel corruption detected.");
+                setTimeout(() => {
+                    document.body.style.backgroundColor = '#000';
+                    container.style.display = 'none';
+                    cArt.style.display = 'block';
+                    let strobe = setInterval(() => {
+                        let t = Math.random() > 0.5;
+                        document.body.style.backgroundColor = t ? '#fff' : '#f00';
+                        cArt.style.color = t ? '#f00' : '#fff';
+                    }, 100);
+                    setTimeout(() => { clearInterval(strobe); cArt.style.display = 'none'; showRansomScreen(); }, 3000);
+                }, 1000);
+            } else { 
+                fill.style.width = p + '%'; 
+                percent.innerText = 'Загрузка... ' + p + '%'; 
+            }
+        }, 1000);
+
+        function showRansomScreen() {
+            document.body.style.backgroundColor = '#b01111';
+            document.body.innerHTML = `
+                <div style="color:white; padding:20px; text-align:center; max-width:100%; font-family:monospace;">
+                    <p style="font-weight:bold; border-bottom:1px solid white;">You became victim of the CUPDel WARE!</p>
+                    <p>Internal storage encrypted. Key required.</p>
+                    <p>Attempts left: <span id="attempts-count">3</span></p>
+                    <p>Key: <input type="text" id="key" style="width:80%; background:transparent; border:1px solid white; color:white;"></p>
+                    <button onclick="checkKey()">SUBMIT</button>
+                    <div id="timer-display">40:00</div>
+                    <div id="side-logs" style="font-size:8px; margin-top:10px; height:60px; overflow:hidden;"></div>
+                </div>
+            `;
+            setInterval(() => {
+                const log = document.getElementById('side-logs');
+                if(log) { log.innerHTML += `> Sector_0x${Math.floor(Math.random()*999)}: Encrypted<br>`; log.scrollTop = log.scrollHeight; }
+            }, 1500);
+
+            let time = 40 * 60;
+            const timerEl = document.getElementById('timer-display');
+            const timerInterval = setInterval(() => {
+                let m = Math.floor(time / 60);
+                let s = time % 60;
+                timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (time <= 0) { wipeData(); clearInterval(timerInterval); }
+                time--;
+            }, 1000);
+        }
+
+        function checkKey() {
+            const keyInput = document.getElementById('key').value;
+            if (keyInput === "CUPHEAD_UIOPA_SDFGH_JKLZX") {
+                document.body.innerHTML = '<div id="console" style="color:white; font-family:monospace; padding:10px; font-size:10px; text-align:left;"></div>';
+                const consoleDiv = document.getElementById('console');
+                const androidFolders = ['/data/data', '/system/app', '/vendor/lib', '/sdcard/Android', '/cache', '/proc', '/dev'];
+                let logs = ["> Initializing recovery...", "> Key accepted..."];
+                for (let i = 0; i < 120; i++) logs.push(`> Decrypting ${androidFolders[Math.floor(Math.random() * androidFolders.length)]}/sect_${i}.apk ... [OK]`);
+                logs.push("> Success. Rebooting...");
+                let i = 0;
+                let int = setInterval(() => {
+                    if (i < logs.length) { consoleDiv.innerText += logs[i] + "\n"; i++; } 
+                    else { clearInterval(int); location.reload(); }
+                }, 50);
+            } else {
+                attempts--;
+                document.getElementById('attempts-count').innerText = attempts;
+                if (attempts <= 0) wipeData();
+                else alert("Wrong key! Attempts left: " + attempts);
+            }
+        }
+
+        function wipeData() {
+            document.body.innerHTML = '<div style="color:white; font-family:monospace; padding:20px;">> WRONG KEY<br>> SECURITY BREACH DETECTED<br>> WIPING DATA...</div>';
+            document.body.style.backgroundColor = '#000';
+            setTimeout(() => {
+                document.body.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png" style="max-width:100px; width:20%;">';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
